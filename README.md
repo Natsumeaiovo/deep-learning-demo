@@ -1,7 +1,7 @@
 # 深度学习在图像处理中的应用教程
 
 ## 前言
-* 本教程是对本人研究生期间的研究内容进行整理总结，总结的同时也希望能够帮助更多的小伙伴。后期如果有学习到新的知识也会与大家一起分享。
+* 本教程是霹雳吧啦Wz研究内容进行整理总结，总结的同时也希望能够帮助更多的小伙伴。后期如果有学习到新的知识也会与大家一起分享。
 * 本教程会以视频的方式进行分享，教学流程如下：  
 1）介绍网络的结构与创新点  
 2）使用Pytorch进行网络的搭建与训练  
@@ -146,8 +146,6 @@
     * [HRNet网络讲解](https://www.bilibili.com/video/BV1bB4y1y7qP)
     * [HRNet源码解析(Pytorch版)](https://www.bilibili.com/video/BV1ar4y157JM)
 
-**[更多相关视频请进入我的bilibili频道查看](https://space.bilibili.com/18161609/channel/index)**
-
 ---
 
 ## 所需环境
@@ -158,10 +156,8 @@
 * torchvision 0.11.1 (pip package)
 * tensorflow 2.4.1 (pip package)
 
-欢迎大家关注下我的微信公众号（**阿喆学习小记**），平时会总结些相关学习博文。    
-
-如果有什么问题，也可以到我的CSDN中一起讨论。
+原作者CSDN：
 [https://blog.csdn.net/qq_37541097/article/details/103482003](https://blog.csdn.net/qq_37541097/article/details/103482003)
 
-我的bilibili频道：
+原作者bilibili频道：
 [https://space.bilibili.com/18161609/channel/index](https://space.bilibili.com/18161609/channel/index)
