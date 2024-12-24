@@ -44,6 +44,14 @@ class VOCSegmentation(data.Dataset):
 
     @staticmethod
     def collate_fn(batch):
+        """
+        在这行代码中，`zip` 是一个内置函数，将多个可迭代对象（在这里是多个 (image, target) 元组）“压缩”在一起，形成两个新的迭代器：
+        一个包含所有的图像。一个包含所有的目标。`*batch` 是解包语法，用于将 `batch` 列表中的每个元素作为单独的参数传递给 `zip` 函数。
+        具体来说，
+        batch 是一个包含多个 (image, target) 元组的列表。
+        zip(*batch) 将 batch 中的每个 (image, target) 元组解包，并将所有的 image 组合成一个 tuple，所有的 target 组合成另一个 tuple。
+        list(zip(*batch)) 将 zip 生成的迭代器转换成一个 list，但 images 和 targets 仍然是 tuple 类型，因为它们是 zip 生成的 tuple。
+        """
         images, targets = list(zip(*batch))
         batched_imgs = cat_list(images, fill_value=0)
         batched_targets = cat_list(targets, fill_value=255)

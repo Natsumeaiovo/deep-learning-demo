@@ -78,7 +78,7 @@ def plot_map(matrix: np.ndarray):
 
 def main():
     # bottom to top
-    dilated_rates = [1, 2, 3]
+    dilated_rates = [1, 2, 5]
     # init feature map
     size = 31
     m = np.zeros(shape=(size, size), dtype=np.int32)

@@ -58,8 +58,8 @@ def main():
 
     print("using {} images for training, {} images for validation.".format(train_num,
                                                                            val_num))
-    # test_data_iter = iter(validate_loader)
     # test_image, test_label = test_data_iter.next()
+    # test_data_iter = iter(validate_loader)
     #
     # def imshow(img):
     #     img = img / 2 + 0.5  # unnormalize

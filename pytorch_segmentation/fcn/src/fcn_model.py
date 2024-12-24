@@ -126,8 +126,9 @@ def fcn_resnet50(aux, num_classes=21, pretrain_backbone=False):
     if pretrain_backbone:
         # 载入resnet50 backbone预训练权重
         backbone.load_state_dict(torch.load("resnet50.pth", map_location='cpu'))
-
+    # 主输出头的inplanes
     out_inplanes = 2048
+    # 辅助输出头的inplanes
     aux_inplanes = 1024
 
     return_layers = {'layer4': 'out'}

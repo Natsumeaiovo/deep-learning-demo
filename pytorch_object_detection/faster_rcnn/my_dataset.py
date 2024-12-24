@@ -1,10 +1,17 @@
-import numpy as np
-from torch.utils.data import Dataset
-import os
-import torch
 import json
+import os
+import random
+
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+import torchvision.transforms as ts
 from PIL import Image
 from lxml import etree
+from torch.utils.data import Dataset
+
+import transforms
+from draw_box_utils import draw_objs
 
 
 class VOCDataSet(Dataset):
@@ -85,7 +92,7 @@ class VOCDataSet(Dataset):
             if xmax <= xmin or ymax <= ymin:
                 print("Warning: in '{}' xml, there are some bbox w/h <=0".format(xml_path))
                 continue
-            
+
             boxes.append([xmin, ymin, xmax, ymax])
             labels.append(self.class_dict[obj["name"]])
             if "difficult" in obj:
@@ -98,8 +105,9 @@ class VOCDataSet(Dataset):
         labels = torch.as_tensor(labels, dtype=torch.int64)
         iscrowd = torch.as_tensor(iscrowd, dtype=torch.int64)
         image_id = torch.tensor([idx])
-        area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
+        area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])  # area = (ymax - ymin) * (xmax - xmin)
 
+        # target是一个字典，包含了boxes, labels, image_id, area, iscrowd等信息
         target = {}
         target["boxes"] = boxes
         target["labels"] = labels
@@ -199,44 +207,39 @@ class VOCDataSet(Dataset):
     def collate_fn(batch):
         return tuple(zip(*batch))
 
-# import transforms
-# from draw_box_utils import draw_objs
-# from PIL import Image
-# import json
-# import matplotlib.pyplot as plt
-# import torchvision.transforms as ts
-# import random
-#
-# # read class_indict
-# category_index = {}
-# try:
-#     json_file = open('./pascal_voc_classes.json', 'r')
-#     class_dict = json.load(json_file)
-#     category_index = {str(v): str(k) for k, v in class_dict.items()}
-# except Exception as e:
-#     print(e)
-#     exit(-1)
-#
-# data_transform = {
-#     "train": transforms.Compose([transforms.ToTensor(),
-#                                  transforms.RandomHorizontalFlip(0.5)]),
-#     "val": transforms.Compose([transforms.ToTensor()])
-# }
-#
-# # load train data set
-# train_data_set = VOCDataSet(os.getcwd(), "2012", data_transform["train"], "train.txt")
-# print(len(train_data_set))
-# for index in random.sample(range(0, len(train_data_set)), k=5):
-#     img, target = train_data_set[index]
-#     img = ts.ToPILImage()(img)
-#     plot_img = draw_objs(img,
-#                          target["boxes"].numpy(),
-#                          target["labels"].numpy(),
-#                          np.ones(target["labels"].shape[0]),
-#                          category_index=category_index,
-#                          box_thresh=0.5,
-#                          line_thickness=3,
-#                          font='arial.ttf',
-#                          font_size=20)
-#     plt.imshow(plot_img)
-#     plt.show()
+
+if __name__ == '__main__':
+
+    # read class_indict
+    category_index = {}
+    try:
+        json_file = open('./pascal_voc_classes.json', 'r')
+        class_dict = json.load(json_file)
+        category_index = {str(v): str(k) for k, v in class_dict.items()}
+    except Exception as e:
+        print(e)
+        exit(-1)
+
+    data_transform = {
+        "train": transforms.Compose([transforms.ToTensor(),
+                                     transforms.RandomHorizontalFlip(0.5)]),
+        "val": transforms.Compose([transforms.ToTensor()])
+    }
+
+    # load train data set
+    train_data_set = VOCDataSet(os.getcwd(), "2012", data_transform["train"], "train.txt")
+    print(len(train_data_set))
+    for index in random.sample(range(0, len(train_data_set)), k=5):
+        img, target = train_data_set[index]
+        img = ts.ToPILImage()(img)
+        plot_img = draw_objs(img,
+                             target["boxes"].numpy(),
+                             target["labels"].numpy(),
+                             np.ones(target["labels"].shape[0]),  # 类别概率，由于是人工标注，故创建一个全为1的数组，长度与 target["labels"] 的相同
+                             category_index=category_index,
+                             box_thresh=0.5,
+                             line_thickness=2,
+                             font='arial.ttf',
+                             font_size=20)
+        plt.imshow(plot_img)
+        plt.show()

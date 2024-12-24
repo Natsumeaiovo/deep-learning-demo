@@ -68,9 +68,42 @@ def create_model(aux, num_classes, pretrain=True):
 
     return model
 
+def parse_args():
+    import argparse
+    parser = argparse.ArgumentParser(description="pytorch fcn training")
+
+    parser.add_argument("--data-path", default="../../", help="VOCdevkit root")
+    parser.add_argument("--num-classes", default=20, type=int)
+    parser.add_argument("--aux", default=True, type=bool, help="auxilier loss")
+    parser.add_argument("--device", default="cuda", help="training device")
+    parser.add_argument("-b", "--batch-size", default=4, type=int)
+    parser.add_argument("--epochs", default=30, type=int, metavar="N",
+                        help="number of total epochs to train")
+
+    parser.add_argument('--lr', default=0.0001, type=float, help='initial learning rate')
+    parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
+                        help='momentum')
+    parser.add_argument('--wd', '--weight-decay', default=1e-4, type=float,
+                        metavar='W', help='weight decay (default: 1e-4)',
+                        dest='weight_decay')
+    parser.add_argument('--print-freq', default=10, type=int, help='print frequency')
+    parser.add_argument('--resume', default='', help='resume from checkpoint')
+    parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
+                        help='start epoch')
+    # Mixed precision training parameters
+    parser.add_argument("--amp", default=False, type=bool,
+                        help="Use torch.cuda.amp for mixed precision training")
+
+    args = parser.parse_args()
+
+    return args
 
 def main(args):
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
+    if device.type == "cuda":
+        print("using {} device.".format(torch.cuda.get_device_name(0)))
+    else:
+        print("using cpu device.")
     batch_size = args.batch_size
     # segmentation nun_classes + background
     num_classes = args.num_classes + 1
@@ -107,15 +140,18 @@ def main(args):
     model = create_model(aux=args.aux, num_classes=num_classes)
     model.to(device)
 
+    # 设置需要优化的参数列表
     params_to_optimize = [
         {"params": [p for p in model.backbone.parameters() if p.requires_grad]},
         {"params": [p for p in model.classifier.parameters() if p.requires_grad]}
     ]
 
+    # 如果使用了辅助分类器，将辅助分类器的参数也加入到参数列表中
     if args.aux:
         params = [p for p in model.aux_classifier.parameters() if p.requires_grad]
         params_to_optimize.append({"params": params, "lr": args.lr * 10})
 
+    # 创建优化器
     optimizer = torch.optim.SGD(
         params_to_optimize,
         lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay
@@ -163,38 +199,6 @@ def main(args):
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     print("training time {}".format(total_time_str))
-
-
-def parse_args():
-    import argparse
-    parser = argparse.ArgumentParser(description="pytorch fcn training")
-
-    parser.add_argument("--data-path", default="/data/", help="VOCdevkit root")
-    parser.add_argument("--num-classes", default=20, type=int)
-    parser.add_argument("--aux", default=True, type=bool, help="auxilier loss")
-    parser.add_argument("--device", default="cuda", help="training device")
-    parser.add_argument("-b", "--batch-size", default=4, type=int)
-    parser.add_argument("--epochs", default=30, type=int, metavar="N",
-                        help="number of total epochs to train")
-
-    parser.add_argument('--lr', default=0.0001, type=float, help='initial learning rate')
-    parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
-                        help='momentum')
-    parser.add_argument('--wd', '--weight-decay', default=1e-4, type=float,
-                        metavar='W', help='weight decay (default: 1e-4)',
-                        dest='weight_decay')
-    parser.add_argument('--print-freq', default=10, type=int, help='print frequency')
-    parser.add_argument('--resume', default='', help='resume from checkpoint')
-    parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
-                        help='start epoch')
-    # Mixed precision training parameters
-    parser.add_argument("--amp", default=False, type=bool,
-                        help="Use torch.cuda.amp for mixed precision training")
-
-    args = parser.parse_args()
-
-    return args
-
 
 if __name__ == '__main__':
     args = parse_args()

@@ -19,7 +19,8 @@ def main():
     aux = False  # inference time not need aux_classifier
     classes = 20
     weights_path = "./save_weights/model_29.pth"
-    img_path = "./test.jpg"
+    # img_path = "../../mydataset/test/1.png"
+    img_path = "../../mydataset/test/6.png"
     palette_path = "./palette.json"
     assert os.path.exists(weights_path), f"weights {weights_path} not found."
     assert os.path.exists(img_path), f"image {img_path} not found."
@@ -75,7 +76,7 @@ def main():
         prediction = prediction.to("cpu").numpy().astype(np.uint8)
         mask = Image.fromarray(prediction)
         mask.putpalette(pallette)
-        mask.save("test_result.png")
+        mask.save("./predict/test_result_6.png")
 
 
 if __name__ == '__main__':

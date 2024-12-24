@@ -25,6 +25,7 @@ def main():
         outputs = net(im)
         predict = torch.max(outputs, dim=1)[1].numpy()
     print(classes[int(predict)])
+    print(torch.softmax(outputs, dim=1))
 
 
 if __name__ == '__main__':
