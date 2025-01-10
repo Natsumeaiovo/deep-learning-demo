@@ -20,20 +20,22 @@ class DriveDataset(Dataset):
             if os.path.exists(i) is False:
                 raise FileNotFoundError(f"file {i} does not exists.")
 
-        self.roi_mask = [os.path.join(data_root, "mask", i.split("_")[0] + f"_{self.flag}_mask.gif")
-                         for i in img_names]
-        # check files
-        for i in self.roi_mask:
-            if os.path.exists(i) is False:
-                raise FileNotFoundError(f"file {i} does not exists.")
+        # mask
+        # self.roi_mask = [os.path.join(data_root, "mask", i.split("_")[0] + f"_{self.flag}_mask.gif")
+        #                  for i in img_names]
+        # # check files
+        # for i in self.roi_mask:
+        #     if os.path.exists(i) is False:
+        #         raise FileNotFoundError(f"file {i} does not exists.")
 
     def __getitem__(self, idx):
         img = Image.open(self.img_list[idx]).convert('RGB')
         manual = Image.open(self.manual[idx]).convert('L')
         manual = np.array(manual) / 255
-        roi_mask = Image.open(self.roi_mask[idx]).convert('L')
-        roi_mask = 255 - np.array(roi_mask)
-        mask = np.clip(manual + roi_mask, a_min=0, a_max=255)
+        # roi_mask = Image.open(self.roi_mask[idx]).convert('L')
+        # roi_mask = 255 - np.array(roi_mask)
+        # mask = np.clip(manual + roi_mask, a_min=0, a_max=255)
+        mask = np.clip(manual, a_min=0, a_max=255)
 
         # 这里转回PIL的原因是，transforms中是对PIL数据进行处理
         mask = Image.fromarray(mask)

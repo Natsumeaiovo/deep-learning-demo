@@ -17,11 +17,11 @@ def time_synchronized():
 def main():
     classes = 1  # exclude background
     weights_path = "./save_weights/best_model.pth"
-    img_path = "./DRIVE/test/images/01_test.tif"
-    roi_mask_path = "./DRIVE/test/mask/01_test_mask.gif"
+    img_path = "../../mydataset/DRIVE/test/images/02_test.tif"
+    # roi_mask_path = "../../mydataset/DRIVE/test/mask/01_test_mask.gif"
     assert os.path.exists(weights_path), f"weights {weights_path} not found."
     assert os.path.exists(img_path), f"image {img_path} not found."
-    assert os.path.exists(roi_mask_path), f"image {roi_mask_path} not found."
+    # assert os.path.exists(roi_mask_path), f"image {roi_mask_path} not found."
 
     mean = (0.709, 0.381, 0.224)
     std = (0.127, 0.079, 0.043)
@@ -38,8 +38,8 @@ def main():
     model.to(device)
 
     # load roi mask
-    roi_img = Image.open(roi_mask_path).convert('L')
-    roi_img = np.array(roi_img)
+    # roi_img = Image.open(roi_mask_path).convert('L')
+    # roi_img = np.array(roi_img)
 
     # load image
     original_img = Image.open(img_path).convert('RGB')
@@ -67,10 +67,11 @@ def main():
         prediction = prediction.to("cpu").numpy().astype(np.uint8)
         # 将前景对应的像素值改成255(白色)
         prediction[prediction == 1] = 255
-        # 将不敢兴趣的区域像素设置成0(黑色)
-        prediction[roi_img == 0] = 0
+        # 将不感兴趣的区域像素设置成0(黑色)
+        # prediction[roi_img == 0] = 0
         mask = Image.fromarray(prediction)
         mask.save("test_result.png")
+        print("predict done.")
 
 
 if __name__ == '__main__':

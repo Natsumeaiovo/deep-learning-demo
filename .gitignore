@@ -2,6 +2,8 @@
 *.idea
 __pycache__
 *.zip
+*.rar
+*.txt
 *.ppt
 *.pptx
 flower_data
@@ -10,6 +12,8 @@ flower_data
 *.pt
 *.jpg
 *.png
+*.gif
+*.tif
 *.ckpt.*
 *.ckpt
 *.config

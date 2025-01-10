@@ -4,6 +4,10 @@
 * [https://github.com/milesial/Pytorch-UNet](https://github.com/milesial/Pytorch-UNet)
 * [https://github.com/pytorch/vision](https://github.com/pytorch/vision)
 
+原始论文：
+
+![image-20241225101724257](image/image-20241225101724257.png)
+
 ## 环境配置：
 * Python3.6/3.7/3.8
 * Pytorch1.10
@@ -49,5 +53,9 @@
 ## 进一步了解该项目，以及对U-Net代码的分析可参考我的bilibili
 * [https://b23.tv/PCJJmqN](https://b23.tv/PCJJmqN)
 
+
+
 ## 本项目U-Net默认使用双线性插值做为上采样，结构图如下
+
+
 ![u-net](unet.png)

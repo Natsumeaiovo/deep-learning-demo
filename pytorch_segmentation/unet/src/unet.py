@@ -28,6 +28,7 @@ class Down(nn.Sequential):
 
 class Up(nn.Module):
     def __init__(self, in_channels, out_channels, bilinear=True):
+        # 这里的in_channels指的是DoubleConv的输入通道数
         super(Up, self).__init__()
         if bilinear:
             self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
@@ -51,6 +52,7 @@ class Up(nn.Module):
         return x
 
 
+# 1*1的卷积
 class OutConv(nn.Sequential):
     def __init__(self, in_channels, num_classes):
         super(OutConv, self).__init__(
